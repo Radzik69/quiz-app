@@ -1,4 +1,5 @@
 "use client"
+import { isUserLoggedIn } from "@/app/globalVariables"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,8 +17,72 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { useState } from "react"
 
-export default function LoginPage() {
+export default function LoginPage({isLoggedIn}) {
+  const setUserLogged = isUserLoggedIn((state) => state.setIsUserLoggedIn);
+
+  const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  
+  const getInputData = (data) => {
+    if(data.target.id === "email") setUserEmail(data.target.value);
+    if(data.target.id === "username") setUserName(data.target.value);
+    if(data.target.id === "password") setUserPassword(data.target.value);
+  }
+
+  const handleRegister = async () => {
+  
+    const dataToDB = {
+      email: userEmail,
+      username: userName,
+      password: userPassword,
+    };
+
+    try {
+      const res = await fetch("http://192.168.88.216:5678/webhook-test/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToDB), 
+      });
+  
+      const data = await res.json();
+      console.log("Response from n8n:", data);
+      setUserLogged(true)
+    } catch (err) {
+      console.error("Error sending data to n8n:", err);
+    }
+  };
+
+  const handleLogin = async () => {
+  
+    const dataToDB = {
+      email: userEmail,
+      password: userPassword,
+    };
+
+    try {
+      const res = await fetch("http://192.168.88.216:5678/webhook-test/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToDB), 
+      });
+  
+      const data = await res.json();
+      console.log("Response from n8n:", data);
+      setUserLogged(true)
+    } catch (err) {
+      console.error("Error sending data to n8n:", err);
+    }
+  };
+  
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-800 to-gray-700 p-4">
       <Tabs defaultValue="Register" className="w-full max-w-md shadow-xl rounded-2xl bg-gray-800/80 backdrop-blur-md p-6">
@@ -47,19 +112,19 @@ export default function LoginPage() {
             <CardContent className="space-y-4">
               <div className="space-y-1">
                 <Label htmlFor="email" className="text-gray-300">Email</Label>
-                <Input id="email" className="bg-gray-700 border-gray-600 text-white" />
+                <Input onChange={(e)=>{getInputData(e)}} id="email" className="bg-gray-700 border-gray-600 text-white"/>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="username" className="text-gray-300">Username</Label>
-                <Input id="username" className="bg-gray-700 border-gray-600 text-white" />
+                <Input onChange={(e)=>{getInputData(e)}} id="username" className="bg-gray-700 border-gray-600 text-white" />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password" className="text-gray-300">Password</Label>
-                <Input type="password" id="password" className="bg-gray-700 border-gray-600 text-white" />
+                <Input onChange={(e)=>{getInputData(e)}} type="password" id="password" className="bg-gray-700 border-gray-600 text-white" />
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button onClick={handleRegister} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
                 Register
               </Button>
             </CardFooter>
@@ -75,17 +140,17 @@ export default function LoginPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="username" className="text-gray-300">Username</Label>
-                <Input id="username" className="bg-gray-700 border-gray-600 text-white" />
+            <div className="space-y-1">
+                <Label htmlFor="email" className="text-gray-300">Email</Label>
+                <Input onChange={(e)=>{getInputData(e)}} id="email" className="bg-gray-700 border-gray-600 text-white"/>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password" className="text-gray-300">Password</Label>
-                <Input type="password" id="password" className="bg-gray-700 border-gray-600 text-white" />
+                <Input onChange={(e)=>{getInputData(e)}} type="password" id="password" className="bg-gray-700 border-gray-600 text-white" />
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button onClick={handleLogin} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
                 Login
               </Button>
             </CardFooter>

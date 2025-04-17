@@ -1,11 +1,12 @@
 "use client"
 import LoginPage from "@/components/loginPage";
 import { useState } from "react";
+import { isUserLoggedIn } from "./globalVariables";
 
 export default function Page() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const userLogged = isUserLoggedIn((state) => state.user);
 
-  if(!isUserLoggedIn){
+  if(!userLogged){
     return(
       <LoginPage></LoginPage>
     )
