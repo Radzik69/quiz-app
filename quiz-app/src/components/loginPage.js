@@ -26,6 +26,9 @@ export default function LoginPage({isLoggedIn}) {
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
   
+  const linkSchool = "http://172.16.15.163"
+  const linkHome = "http://192.168.88.216"
+
   const getInputData = (data) => {
     if(data.target.id === "email") setUserEmail(data.target.value);
     if(data.target.id === "username") setUserName(data.target.value);
@@ -41,7 +44,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch("http://192.168.88.216:5678/webhook-test/register", {
+      const res = await fetch(`${linkSchool}:5678/webhook-test/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +68,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch("http://192.168.88.216:5678/webhook-test/login", {
+      const res = await fetch(`${linkSchool}:5678/webhook-test/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
