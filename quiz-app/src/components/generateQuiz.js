@@ -17,16 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 export default function GenerateQuiz() {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [quizData, setQuizData] = useState(null)
-
   const linkSchool = "http://172.16.15.163"
+  const [questionNumber, setQuestionNumber] = useState(11)
   const getQuizData = async () => {
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook-test/ai`, {
+      const res = await fetch(`${linkSchool}:5678/webhook/ai`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -36,6 +37,8 @@ export default function GenerateQuiz() {
       const data = await res.json();
       console.log("Response from n8n:", data);
       setQuizData(data)
+      setQuestionNumber(questionNumber + 1)
+
     } catch (err) {
       console.error("Error fetching quiz:", err);
     }
@@ -45,11 +48,20 @@ export default function GenerateQuiz() {
     const answer = e.target.innerText;
     if (answer === quizData[0].output.correctAnswer) {
       console.log("Correct answer");
+      toast({
+        variant: "outline",
+        title: "Your answer is correct",
+        description: "Congratulations on getting the right answer, now please go to next question",
+      })
     } else {
       console.log("Wrong answer");
+      toast({
+        variant: "destructive",
+        title: "Your answer is wrong",
+        description: "The correct answer was: " + quizData[0].output.correctAnswer,
+      })
     }
 
-    getQuizData();
   };
 
   const getTopic = (e) => {
@@ -64,6 +76,7 @@ export default function GenerateQuiz() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 gap-10">
+      {quizData==null && (
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Generate New Quiz</CardTitle>
@@ -98,13 +111,13 @@ export default function GenerateQuiz() {
           <Button type="submit" onClick={generateQuiz}>Generate Quiz</Button>
         </CardFooter>
       </Card>
-
-      {quizData && (
+)}
+      {quizData && questionNumber<=10 && (
         <Card className="w-full max-w-xl">
         <CardHeader>
           <CardTitle>
             {quizData && quizData[0]?.output?.question
-              ? quizData[0].output.question
+              ? <h1> {questionNumber}. {quizData[0].output.question}</h1>
               : "Pytanie"}
           </CardTitle>
         </CardHeader>
@@ -150,8 +163,37 @@ export default function GenerateQuiz() {
           </Button>
         </CardFooter>
       </Card>
-      
+      )}
+
+      {questionNumber>10 && (
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Quiz finished</CardTitle>
+            <CardDescription>Congratulations, you finished the quiz!</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" onClick={() =>generateQuiz}>Start new quiz</Button>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
 }
+
+// TODO: 
+// - dodac loadery przy generowaniu nowego pytania
+// - przy zakonczeniu quizu wyswietlic odpowiedzi na pytania
+// - wszystko poloczyc z baza danych, kazda akcja powinna byc zapisana w bazie danych
+// - dodac proggres bar do quizu, zeby widac bylo ile pytan zostalo do konca
+// - dodac wybieranie tematu quizu
+// - LATER wyswietlanie pelnej histori quizow uzytkownika, wykresy itp
+// - dodac lepsze logowanie z tokenami
+//
+//
+//
+//
+//
+//
+//
+
+

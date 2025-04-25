@@ -44,7 +44,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook-test/register`, {
+      const res = await fetch(`${linkSchool}:5678/webhook/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook-test/login`, {
+      const res = await fetch(`${linkSchool}:5678/webhook/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
