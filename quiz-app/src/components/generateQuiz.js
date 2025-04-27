@@ -19,15 +19,22 @@ import {
 } from "@/components/ui/select"
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { isUserLoggedIn } from "@/app/globalVariables";
 
 export default function GenerateQuiz() {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [quizData, setQuizData] = useState(null)
   const linkSchool = "http://172.16.15.163"
-  const [questionNumber, setQuestionNumber] = useState(11)
+  const linkHome = "http://192.168.88.216"
+  const [questionDbData, setQuestionDbData] = useState(null)
+  const [questionNumber, setQuestionNumber] = useState(0)
+  const [sessionDbData, setSessionDbData] = useState(null)
+  const [score, setScore] = useState(0)
+  const userLogged = isUserLoggedIn((state) => state.user);
+
   const getQuizData = async () => {
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook/ai`, {
+      const res = await fetch(`${linkHome}:5678/webhook/ai`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -44,10 +51,59 @@ export default function GenerateQuiz() {
     }
   };
 
-  const testFunc = (e) => {
+  const addQuestionToDB = async () => {
+    const dataToDB = {
+      question: quizData[0].output.question,
+      category: selectedTopic,
+      answers: JSON.stringify(quizData[0].output.answers)
+    };
+  
+    try {
+      const res = await fetch(`${linkHome}:5678/webhook/question`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToDB),
+      });
+      const data = await res.json();
+      setQuestionDbData(data)
+      console.log("Response from n8n:", data);
+    } catch (err) {
+      console.error("Error sending data to n8n:", err);
+    }
+  };
+  
+  const addSessionToDB = async () => {
+    console.log("User logged:", userLogged);
+
+    const dataToDB = {
+      user: userLogged[0].record.id,
+      category: selectedTopic,
+    };
+    console.log("Data to send to n8n:", dataToDB);
+    try {
+      const res = await fetch(`${linkHome}:5678/webhook/sessionCreate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToDB),
+      });
+      const data = await res.json();
+      setSessionDbData(data)
+      console.log("Response from n8n:", data);
+    } catch (err) {
+      console.error("Error sending data to n8n:", err);
+    }
+  };
+
+  const checkAnswerCorrect = (e) => {
+    addQuestionToDB()
     const answer = e.target.innerText;
     if (answer === quizData[0].output.correctAnswer) {
       console.log("Correct answer");
+      setScore(score + 1)
       toast({
         variant: "outline",
         title: "Your answer is correct",
@@ -61,7 +117,7 @@ export default function GenerateQuiz() {
         description: "The correct answer was: " + quizData[0].output.correctAnswer,
       })
     }
-
+    getQuizData()
   };
 
   const getTopic = (e) => {
@@ -71,8 +127,34 @@ export default function GenerateQuiz() {
   const generateQuiz = (e) => {
     e.preventDefault();
     console.log("Selected topic:", selectedTopic);
+    addSessionToDB()
     getQuizData();
   };
+
+  const sessionAddScore = async () => {
+    const dataToDB = {
+      id: sessionDbData[0].id,
+      score: score,
+    };
+  
+    try {
+      const res = await fetch(`${linkHome}:5678/webhook/sessionUpdate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToDB),
+      });
+      const data = await res.json();
+      console.log("Response from n8n:", data);
+    } catch (err) {
+      console.error("Error sending data to n8n:", err);
+    }
+  }
+
+  if(questionNumber==10){
+    sessionAddScore()
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 gap-10">
@@ -124,7 +206,7 @@ export default function GenerateQuiz() {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Button
-              onClick={(e) => testFunc(e)}
+              onClick={(e) => checkAnswerCorrect(e)}
               className="text-lg py-6"
             >
               {quizData && quizData[0]?.output?.answers?.[0]?.text
@@ -132,7 +214,7 @@ export default function GenerateQuiz() {
                 : "Odpowiedź 1"}
             </Button>
             <Button
-              onClick={(e) => testFunc(e)}
+              onClick={(e) => checkAnswerCorrect(e)}
               className="text-lg py-6"
             >
               {quizData && quizData[0]?.output?.answers?.[1]?.text
@@ -140,7 +222,7 @@ export default function GenerateQuiz() {
                 : "Odpowiedź 2"}
             </Button>
             <Button
-              onClick={(e) => testFunc(e)}
+              onClick={(e) => checkAnswerCorrect(e)}
               className="text-lg py-6"
             >
               {quizData && quizData[0]?.output?.answers?.[2]?.text
@@ -148,7 +230,7 @@ export default function GenerateQuiz() {
                 : "Odpowiedź 3"}
             </Button>
             <Button
-              onClick={(e) => testFunc(e)}
+              onClick={(e) => checkAnswerCorrect(e)}
               className="text-lg py-6"
             >
               {quizData && quizData[0]?.output?.answers?.[3]?.text
@@ -166,34 +248,23 @@ export default function GenerateQuiz() {
       )}
 
       {questionNumber>10 && (
+        <div>
+          <div className="text-center mb-4">
         <Card className="w-[350px]">
           <CardHeader>
             <CardTitle>Quiz finished</CardTitle>
             <CardDescription>Congratulations, you finished the quiz!</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" onClick={() =>generateQuiz}>Start new quiz</Button>
+            <Button variant="outline" onClick={() =>{generateQuiz()}}>Start new quiz</Button>
           </CardContent>
         </Card>
+        </div>
+            <div>
+              
+            </div> 
+        </div>
       )}
     </div>
   );
 }
-
-// TODO: 
-// - dodac loadery przy generowaniu nowego pytania
-// - przy zakonczeniu quizu wyswietlic odpowiedzi na pytania
-// - wszystko poloczyc z baza danych, kazda akcja powinna byc zapisana w bazie danych
-// - dodac proggres bar do quizu, zeby widac bylo ile pytan zostalo do konca
-// - dodac wybieranie tematu quizu
-// - LATER wyswietlanie pelnej histori quizow uzytkownika, wykresy itp
-// - dodac lepsze logowanie z tokenami
-//
-//
-//
-//
-//
-//
-//
-
-

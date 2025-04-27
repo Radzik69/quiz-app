@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/tabs"
 import { useState } from "react"
 
-export default function LoginPage({isLoggedIn}) {
+export default function LoginPage() {
   const setUserLogged = isUserLoggedIn((state) => state.setIsUserLoggedIn);
 
   const [userEmail, setUserEmail] = useState("");
@@ -44,7 +44,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook/register`, {
+      const res = await fetch(`${linkHome}:5678/webhook/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function LoginPage({isLoggedIn}) {
   
       const data = await res.json();
       console.log("Response from n8n:", data);
-      setUserLogged(true)
+      setUserLogged(data)
     } catch (err) {
       console.error("Error sending data to n8n:", err);
     }
@@ -68,7 +68,7 @@ export default function LoginPage({isLoggedIn}) {
     };
 
     try {
-      const res = await fetch(`${linkSchool}:5678/webhook/login`, {
+      const res = await fetch(`${linkHome}:5678/webhook/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function LoginPage({isLoggedIn}) {
   
       const data = await res.json();
       console.log("Response from n8n:", data);
-      setUserLogged(true)
+      setUserLogged(data)
     } catch (err) {
       console.error("Error sending data to n8n:", err);
     }
