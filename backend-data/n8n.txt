@@ -1,0 +1,1108 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -520,
+        -780
+      ],
+      "id": "a371e049-1a50-484a-ae92-00d77cd7b527",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "register",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -940,
+        -760
+      ],
+      "id": "a9cec393-04f7-427c-b255-6e6c0cafcc6c",
+      "name": "Register User",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1280,
+        -680
+      ],
+      "id": "404c1507-dcac-4689-a31f-d12207a834d8",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/testDB/records",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "test4"
+            },
+            {
+              "name": "number",
+              "value": "4"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1500,
+        -660
+      ],
+      "id": "9eef5ba6-d64e-480b-b9a5-0836749f3810",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "path": "add",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1700,
+        -660
+      ],
+      "id": "dde812c0-3db0-49b8-90ef-dfafb3d26469",
+      "name": "ADD DATA TO DB",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        -580
+      ],
+      "id": "a0efe251-e8b3-44e8-b286-6c2ef0dbe9ca",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/users/records",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.body.email }}"
+            },
+            {
+              "name": "name",
+              "value": "={{ $json.body.username }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $json.body.password }}"
+            },
+            {
+              "name": "passwordConfirm",
+              "value": "={{ $json.body.password }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -740,
+        -760
+      ],
+      "id": "019459de-5147-4708-ada6-6b637520a58e",
+      "name": "Register Request to PocketBase"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "login",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -980,
+        -560
+      ],
+      "id": "5410a0ad-cbd5-4c50-8ad2-15224c168674",
+      "name": "Login User",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/users/auth-with-password",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "identity",
+              "value": "={{ $json.body.email }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $json.body.password }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -780,
+        -560
+      ],
+      "id": "abaa796e-fd85-4f29-8802-244953ab7424",
+      "name": "Login Request to PocketBase"
+    },
+    {
+      "parameters": {
+        "path": "=ai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1660,
+        -240
+      ],
+      "id": "fc1a0be2-32f1-4ae2-8ba0-0f833c9062bf",
+      "name": "Webhook1",
+      "webhookId": "364de7f6-d21a-4335-ac7c-7646fa64934b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a creative quiz generator. Your task is to generate a fresh and unique quiz every time. Avoid repeating questions or answers across different calls.\n\nCreate a quiz in JSON format with 10 varied multiple-choice questions based on the topic below. Do not reuse standard or generic questions — use uncommon facts, edge cases, or conceptual angles. Vary question formats and difficulty levels slightly to ensure diversity.\n\nEach question must include:\n- \"question\": the question as a string.\n- \"correctAnswer\": the correct answer as a string.\n- \"answers\": an array of 4 objects.\n- Each answer object must have:\n  - \"text\": the answer text.\n  - \"correct\": a boolean (true for the correct one, false for the others).\n- Only one answer should have \"correct\": true.\n\nThe topic is: {{ $json.query.topic }}\n\nRules:\n- Do NOT repeat questions or reuse previous ones, even if the topic is the same.\n- Never leave the quiz empty — always return a full quiz.\n- The output MUST be valid JSON with no extra text.\n\nReturn ONLY the quiz in valid JSON format.\n",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -1440,
+        -240
+      ],
+      "id": "25ac5730-6a16-4397-8348-bebc982970e2",
+      "name": "Basic LLM Chain1",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        -220
+      ],
+      "id": "3a4af77d-bb9a-4c9c-9d48-262355198cb4",
+      "name": "Respond to Webhook6",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n    \"question\": \"\",\n    \"correctAnswer\":\"\",\n    \"answers\": [\n      { \"text\": \"\", \"correct\": true },\n      { \"text\": \"\", \"correct\": false },\n      { \"text\": \"\", \"correct\": false },\n      { \"text\": \"\", \"correct\": false }\n    ]\n  }\n "
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        0
+      ],
+      "id": "47ec17f0-8f91-4efb-9a17-2daf49d2b691",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        120
+      ],
+      "id": "3b1fc4c5-6d51-4f9c-8cc8-5000c7f4682c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LlcMPCeAHYLRZSlr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -520,
+        -1000
+      ],
+      "id": "625777ec-a5e8-4a80-ad0d-ee8ec0a169b1",
+      "name": "Respond to Webhook8"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "question",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -940,
+        -1000
+      ],
+      "id": "51d2f26d-c89a-4acb-b329-a149308923f1",
+      "name": "Add Question",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/questions/records",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "={{ $json.body.question }}"
+            },
+            {
+              "name": "category",
+              "value": "={{ $json.body.category }}"
+            },
+            {
+              "name": "answers",
+              "value": "={{ $json.body.answers }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -720,
+        -1000
+      ],
+      "id": "27da28fc-9f2a-4b65-8150-f63793b29e34",
+      "name": "Add question to DB"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        -1460
+      ],
+      "id": "848111e0-1993-4aa7-bac0-91e0a7ed678f",
+      "name": "Respond to Webhook9"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://192.168.88.216:8090/api/collections/sessions/records/{{ $json.body.id }}",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "score",
+              "value": "={{ $json.body.score }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -760,
+        -1460
+      ],
+      "id": "fa8f554f-43fa-445a-9884-710bc249d3e8",
+      "name": "create session in db"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        -1200
+      ],
+      "id": "8c125d81-a385-4d46-a9e5-23b7c8980579",
+      "name": "Respond to Webhook10"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sessionCreate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -980,
+        -1200
+      ],
+      "id": "30871133-3e0c-4d8b-b1af-58b80df42422",
+      "name": "create session",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/sessions/records",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "user",
+              "value": "={{ $json.body.user }}"
+            },
+            {
+              "name": "category",
+              "value": "={{ $json.body.category }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -760,
+        -1200
+      ],
+      "id": "2d038646-8f2a-4825-89c9-2551ff323407",
+      "name": "create session webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sessionUpdate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -980,
+        -1460
+      ],
+      "id": "26f71d6e-83f3-4a3f-8081-2fa9bf70d168",
+      "name": "session update",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -1680
+      ],
+      "id": "fbee3611-5953-4953-8eec-c6b0b18b36fd",
+      "name": "Respond to Webhook11"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.88.216:8090/api/collections/answers/records",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "user",
+              "value": "={{ $json.body.user }}"
+            },
+            {
+              "name": "session",
+              "value": "={{ $json.body.session }}"
+            },
+            {
+              "name": "question",
+              "value": "={{ $json.body.question }}"
+            },
+            {
+              "name": "selectedAnswer",
+              "value": "={{ $json.body.selectedAnswer }}"
+            },
+            {
+              "name": "isTrueAnswer",
+              "value": "={{ $json.body.isTrueAnswer }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -740,
+        -1680
+      ],
+      "id": "77d4252f-8e70-4ec9-9bd3-286b40419454",
+      "name": "create session webhook1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "answerCreate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -980,
+        -1680
+      ],
+      "id": "adcf7f2e-38eb-4d47-98e2-5c76647b8456",
+      "name": "createAnswer",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -520,
+        -1880
+      ],
+      "id": "e36d539f-8983-4b86-b0f6-8ed003e038f1",
+      "name": "Respond to Webhook12"
+    },
+    {
+      "parameters": {
+        "path": "sessionAnswers",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        -1880
+      ],
+      "id": "02bcafd6-7eff-44c5-945f-80224a383da9",
+      "name": "getSessionAnswers",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.88.216:8090/api/collections/answers/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter",
+              "value": "=session=\"{{ $json[\"query\"][\"filter\"] }}\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -720,
+        -1880
+      ],
+      "id": "5b57f803-f25d-4c63-8c06-6fa321f91204",
+      "name": "get specific session answers"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1340,
+        -1060
+      ],
+      "id": "d426e61b-79b5-4047-9256-5a87d9ebee0b",
+      "name": "Respond to Webhook13"
+    },
+    {
+      "parameters": {
+        "path": "getNotionTopics",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1780,
+        -1060
+      ],
+      "id": "6acd3259-9e2f-46da-8a83-979cd338cfd5",
+      "name": "notionTopics",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "databaseId": {
+          "__rl": true,
+          "value": "https://www.notion.so/1eadbd6f2f2c80cc84a4f47462cfc028?v=1eadbd6f2f2c803bac80000c6931525c&pvs=13",
+          "mode": "url"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -1560,
+        -1060
+      ],
+      "id": "796aecf5-9f3d-4919-89ff-1850f69f6820",
+      "name": "Notion1",
+      "credentials": {
+        "notionApi": {
+          "id": "eBAqqQyWTcMel7ZK",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        -2060
+      ],
+      "id": "d09d2b41-dbf9-48fb-94f7-0a27e6ba2bc5",
+      "name": "Respond to Webhook14"
+    },
+    {
+      "parameters": {
+        "path": "allSessionsUser",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        -2060
+      ],
+      "id": "821e53e5-02b8-4efe-8e75-ca2df607ba15",
+      "name": "getAllUserSessions",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.88.216:8090/api/collections/sessions/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter",
+              "value": "=user=\"{{ $json[\"query\"][\"filter\"] }}\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -760,
+        -2060
+      ],
+      "id": "d052da28-c634-4cac-a7f1-80bf635c1836",
+      "name": "get all sessions from user"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -2260
+      ],
+      "id": "e14e4817-9b64-47eb-a5e7-fa3fc86c09d6",
+      "name": "Respond to Webhook15"
+    },
+    {
+      "parameters": {
+        "path": "sessionQuestion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -920,
+        -2260
+      ],
+      "id": "23004629-cdde-434d-8e55-aa3f7cc0ea66",
+      "name": "getSessionAnswers1",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.88.216:8090/api/collections/questions/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter",
+              "value": "=id=\"{{ $json[\"query\"][\"filter\"] }}\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -680,
+        -2260
+      ],
+      "id": "badf8692-8f81-450b-a685-8910603dedf1",
+      "name": "get specific session answers1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -2460
+      ],
+      "id": "7193cc7b-5032-482a-a9be-6e2f295bf90f",
+      "name": "Respond to Webhook16"
+    },
+    {
+      "parameters": {
+        "path": "allAnswers",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -940,
+        -2460
+      ],
+      "id": "c7aeec9c-e69a-459d-82de-159af91aaef2",
+      "name": "getAllUserSessions1",
+      "webhookId": "6e3a278c-14cf-4d18-a42f-494b83b69faa"
+    },
+    {
+      "parameters": {
+        "url": "http://192.168.88.216:8090/api/collections/answers/records",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter",
+              "value": "=user=\"{{ $json[\"query\"][\"filter\"] }}\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -740,
+        -2460
+      ],
+      "id": "3c60129d-60c3-4e39-bcef-defaa3ede276",
+      "name": "get all sessions from user1"
+    }
+  ],
+  "connections": {
+    "Register User": {
+      "main": [
+        [
+          {
+            "node": "Register Request to PocketBase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ADD DATA TO DB": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register Request to PocketBase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login User": {
+      "main": [
+        [
+          {
+            "node": "Login Request to PocketBase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login Request to PocketBase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Question": {
+      "main": [
+        [
+          {
+            "node": "Add question to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add question to DB": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create session in db": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create session": {
+      "main": [
+        [
+          {
+            "node": "create session webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create session webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "session update": {
+      "main": [
+        [
+          {
+            "node": "create session in db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create session webhook1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createAnswer": {
+      "main": [
+        [
+          {
+            "node": "create session webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getSessionAnswers": {
+      "main": [
+        [
+          {
+            "node": "get specific session answers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get specific session answers": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notionTopics": {
+      "main": [
+        [
+          {
+            "node": "Notion1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getAllUserSessions": {
+      "main": [
+        [
+          {
+            "node": "get all sessions from user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get all sessions from user": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getSessionAnswers1": {
+      "main": [
+        [
+          {
+            "node": "get specific session answers1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get specific session answers1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getAllUserSessions1": {
+      "main": [
+        [
+          {
+            "node": "get all sessions from user1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get all sessions from user1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1cf7424ab0262d3c5f6948c9fbf0ce352de17bc3503242d292f935f51e8c3179"
+  }
+}
