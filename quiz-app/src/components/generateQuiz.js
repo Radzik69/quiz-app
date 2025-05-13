@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { isUserLoggedIn } from "@/app/globalVariables";
+import FloatingDockMenu from "./floatingDock";
 
 export default function GenerateQuiz() {
   const [writtenTopic, setWrittenTopic] = useState("");
@@ -34,15 +35,14 @@ export default function GenerateQuiz() {
 
   const finalTopic = writtenTopic || selectedTopic;
 
-  const linkHome = "http://192.168.88.216";
+  const currentLink = "http://172.16.15.163"
   const userLogged = isUserLoggedIn((state) => state.user);
 
   const getQuizData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/ai?topic=${finalTopic}`);
+      const res = await fetch(`${currentLink}:5678/webhook/ai?topic=${finalTopic}`);
       const data = await res.json();
-      console.log(`Generate Quiz question ${questionNumber + 1} Response:`, data);
       setQuizData(data);
     } catch (err) {
       console.error("Error fetching question:", err);
@@ -54,9 +54,8 @@ export default function GenerateQuiz() {
   const getSessionAnswers = async (sessionId) => {
     setLoading(true);
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/sessionAnswers?filter=${sessionId}`);
+      const res = await fetch(`${currentLink}:5678/webhook/sessionAnswers?filter=${sessionId}`);
       const data = await res.json();
-      console.log("Fetched all answers within specific session Response:", data);
       setSessionAnswers(data);
     } catch (err) {
       console.error("Error fetching session answers:", err);
@@ -72,13 +71,12 @@ export default function GenerateQuiz() {
       category: finalTopic
     };
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/sessionCreate`, {
+      const res = await fetch(`${currentLink}:5678/webhook/sessionCreate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToDB)
       });
       const data = await res.json();
-      console.log("Session created:", data);
       setSessionDbData(data);
       return data;
     } catch (err) {
@@ -97,13 +95,12 @@ export default function GenerateQuiz() {
       answers: JSON.stringify(quizData[0].output.answers)
     };
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/question`, {
+      const res = await fetch(`${currentLink}:5678/webhook/question`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToDB)
       });
-      const data = await res.json();
-      return data;
+      return await res.json();
     } catch (err) {
       console.error("Error saving question to database:", err);
       return null;
@@ -122,13 +119,12 @@ export default function GenerateQuiz() {
       isTrueAnswer
     };
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/answerCreate`, {
+      const res = await fetch(`${currentLink}:5678/webhook/answerCreate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToDB)
       });
-      const data = await res.json();
-      return data;
+      return await res.json();
     } catch (err) {
       console.error("Error saving answer to database:", err);
       return null;
@@ -138,14 +134,13 @@ export default function GenerateQuiz() {
   };
 
   const sessionAddScore = async () => {
-    if (!sessionDbData || !sessionDbData[0]?.id) return;
     setLoading(true);
     const dataToDB = {
-      id: sessionDbData[0].id,
+      id: sessionDbData.id,
       score: score
     };
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/sessionUpdate`, {
+      const res = await fetch(`${currentLink}:5678/webhook/sessionUpdate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToDB)
@@ -161,22 +156,22 @@ export default function GenerateQuiz() {
   const checkAnswerCorrect = async (e) => {
     const answer = e.target.innerText;
     const savedQuestion = await addQuestionToDB();
-    const questionId = savedQuestion?.[0]?.id;
-    const sessionId = sessionDbData?.[0]?.id;
-    const isCorrect = answer === quizData?.[0]?.output?.correctAnswer;
+    const questionId = savedQuestion.id;
+    const sessionId = sessionDbData.id;
+    const isCorrect = answer == quizData[0].output.correctAnswer;
 
     if (isCorrect) {
       setScore((prev) => prev + 1);
       toast({
-        variant: "outline",
-        title: "Your answer is correct",
-        description: "Congratulations on getting the right answer, now please go to next question",
+        variant: "success",
+        title: "Correct!",
+        description: "Great job! Next question incoming."
       });
     } else {
       toast({
         variant: "destructive",
-        title: "Your answer is wrong",
-        description: "The correct answer was: " + quizData?.[0]?.output?.correctAnswer,
+        title: "Incorrect",
+        description: `Correct answer: ${quizData?.[0]?.output?.correctAnswer}`
       });
     }
 
@@ -190,12 +185,10 @@ export default function GenerateQuiz() {
       toast({
         variant: "destructive",
         title: "Topic required",
-        description: "Please write or select a topic first",
+        description: "Please write or select a topic first"
       });
       return;
     }
-
-    console.log("Selected topic:", finalTopic);
     const session = await addSessionToDB();
     if (session) await getQuizData();
   };
@@ -211,8 +204,8 @@ export default function GenerateQuiz() {
     setLoading(false);
     toast({
       variant: "default",
-      title: "New quiz generated",
-      description: "You can start answering questions now!",
+      title: "New quiz started",
+      description: "Let's go!"
     });
   };
 
@@ -222,24 +215,24 @@ export default function GenerateQuiz() {
   };
 
   useEffect(() => {
-    if (questionNumber === 10 && sessionDbData?.[0]?.id) {
+    if (questionNumber === 10 && sessionDbData?.id) {
       sessionAddScore();
-      getSessionAnswers(sessionDbData[0].id);
+      getSessionAnswers(sessionDbData.id);
     }
   }, [questionNumber]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 gap-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-pink-100 flex flex-col items-center py-10 gap-10">
       {loading && (
-        <Card className="w-[350px] text-center animate-pulse">
+        <Card className="w-[350px] text-center animate-pulse shadow-lg">
           <CardHeader>
-            <CardTitle className="text-gray-400">Loading...</CardTitle>
-            <CardDescription className="text-gray-300">Please wait</CardDescription>
+            <CardTitle className="text-blue-500">Loading...</CardTitle>
+            <CardDescription className="text-blue-300">Please wait</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 mt-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-12 bg-gray-300 rounded-md" />
+                <div key={i} className="h-12 bg-blue-200 rounded-md" />
               ))}
             </div>
           </CardContent>
@@ -247,44 +240,42 @@ export default function GenerateQuiz() {
       )}
 
       {!loading && !quizData && (
-        <Card className="w-[350px]">
+        <Card className="w-[350px] shadow-xl">
           <CardHeader>
-            <CardTitle>Generate New Quiz</CardTitle>
-            <CardDescription>Choose or write your quiz topic</CardDescription>
+            <CardTitle className="text-xl text-indigo-600">Start a New Quiz</CardTitle>
+            <CardDescription>Select or type a topic</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid w-full gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="customTopic">Write your own topic</Label>
+                <Label htmlFor="customTopic">Custom Topic</Label>
                 <Input
                   id="customTopic"
                   value={writtenTopic}
                   onChange={(e) => setWrittenTopic(e.target.value)}
                   disabled={!!selectedTopic}
-                  placeholder="Type your custom topic"
+                  placeholder="e.g. React, History"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="selectTopic">Select topic</Label>
+                <Label htmlFor="selectTopic">Predefined Topics</Label>
                 <Select
                   value={selectedTopic}
                   onValueChange={setSelectedTopic}
                   disabled={!!writtenTopic}
                 >
                   <SelectTrigger id="selectTopic">
-                    <SelectValue placeholder="Select a topic..." />
+                    <SelectValue placeholder="Choose topic..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="next">Next.js</SelectItem>
-                    <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                    <SelectItem value="astro">Astro</SelectItem>
-                    <SelectItem value="nuxt">Nuxt.js</SelectItem>
+                    <SelectItem value="programming">Programming</SelectItem>
+                    <SelectItem value="poland">Poland</SelectItem>
+                    <SelectItem value="javascript">JavaScript</SelectItem>
+                    <SelectItem value="history">History</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button variant="outline" onClick={resetTopic}>
-                Reset topic
-              </Button>
+              <Button variant="outline" onClick={resetTopic}>Clear</Button>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
@@ -294,21 +285,21 @@ export default function GenerateQuiz() {
       )}
 
       {!loading && quizData && questionNumber < 10 && (
-        <Card className="w-full max-w-xl">
+        <Card className="w-full max-w-xl shadow-2xl">
           <CardHeader>
-            <CardTitle>
-              {quizData?.[0]?.output?.question ? `${questionNumber + 1}. ${quizData[0].output.question}` : "Pytanie"}
+            <CardTitle className="text-xl font-bold">
+              {`${questionNumber + 1}. ${quizData[0].output.question}`}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 mt-4">
-              {quizData[0]?.output?.answers?.map((ans, i) => (
+              {quizData[0].output.answers.map((ans, i) => (
                 <Button
                   key={i}
-                  onClick={(e) => checkAnswerCorrect(e)}
-                  className="text-lg py-6"
+                  onClick={checkAnswerCorrect}
+                  className="text-md py-5 transition-colors hover:bg-indigo-600 hover:text-white"
                 >
-                  {ans.text || `Odpowiedź ${i + 1}`}
+                  {ans.text}
                 </Button>
               ))}
             </div>
@@ -317,42 +308,41 @@ export default function GenerateQuiz() {
       )}
 
       {!loading && questionNumber === 10 && (
-        <div>
-          <Card className="w-[350px] text-center">
+        <div className="w-full flex flex-col items-center gap-6">
+          <Card className="w-[350px] text-center shadow-md">
             <CardHeader>
-              <CardTitle>Quiz finished</CardTitle>
+              <CardTitle>Quiz Finished</CardTitle>
               <CardDescription>Your score: {score} / 10</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" onClick={generateNewQuiz}>
-                Start new quiz
-              </Button>
+              <Button variant="outline" onClick={generateNewQuiz}>Start Again</Button>
             </CardContent>
           </Card>
 
-          {sessionAnswers?.[0]?.items?.map((answer, index) => {
+          {sessionAnswers?.items.map((answer, index) => {
             const bgColor =
-              answer.isTrueAnswer === "true"
-                ? "bg-green-500"
-                : answer.isTrueAnswer === "false"
-                ? "bg-red-500"
-                : "bg-gray-500";
+              answer.isTrueAnswer === "true" ? "bg-green-500" :
+              answer.isTrueAnswer === "false" ? "bg-red-500" :
+              "bg-gray-500";
 
             const label =
-              answer.isTrueAnswer === "true"
-                ? "Correct"
-                : answer.isTrueAnswer === "false"
-                ? "Wrong"
-                : "No Answer";
+              answer.isTrueAnswer === "true" ? "Correct" :
+              answer.isTrueAnswer === "false" ? "Wrong" :
+              "No Answer";
 
             return (
-              <div key={index} className={`w-[350px] text-center ${bgColor} my-2 py-2 rounded text-white`}>
+              <div
+                key={index}
+                className={`w-[350px] text-center ${bgColor} py-2 rounded text-white`}
+              >
                 <h1>{index + 1}. {label}</h1>
               </div>
             );
           })}
         </div>
       )}
+
+      <FloatingDockMenu />
     </div>
   );
 }

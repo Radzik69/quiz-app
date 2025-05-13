@@ -23,11 +23,11 @@ export default function History() {
   const [sessionAnswers, setSessionAnswers] = useState([]);
   const [sessionQuestions, setSessionQuestions] = useState([]);
 
-  const linkHome = "http://192.168.88.216";
+  const currentLink = "http://172.16.15.163"
 
   const getAllSessions = async () => {
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/allSessionsUser?filter=${userLogged[0].record.id}`);
+      const res = await fetch(`${currentLink}:5678/webhook/allSessionsUser?filter=${userLogged[0].record.id}`);
       const data = await res.json();
       setAllSessions(data);
     } catch (err) {
@@ -37,9 +37,9 @@ export default function History() {
 
   const getSessionAnswers = async (sessionId) => {
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/sessionAnswers?filter=${sessionId}`);
+      const res = await fetch(`${currentLink}:5678/webhook/sessionAnswers?filter=${sessionId}`);
       const data = await res.json();
-      setSessionAnswers(data[0]?.items || []);
+      setSessionAnswers(data.items);
     } catch (err) {
       console.error("Error fetching session answers:", err);
     }
@@ -49,9 +49,9 @@ export default function History() {
     try {
       const fetchedQuestions = [];
       for (const answer of answerData) {
-        const res = await fetch(`${linkHome}:5678/webhook/sessionQuestion?filter=${answer.question}`);
+        const res = await fetch(`${currentLink}:5678/webhook/sessionQuestion?filter=${answer.question}`);
         const data = await res.json();
-        fetchedQuestions.push(data[0]?.items[0]);
+        fetchedQuestions.push(data.items[0]);
       }
       setSessionQuestions(fetchedQuestions);
     } catch (err) {
@@ -78,10 +78,10 @@ export default function History() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       {allSessions &&
-        allSessions[0]?.items?.map((session) => (
-          <Dialog key={session.id} onOpenChange={(open) => open && getSessionData(session)}>
+        allSessions.items?.map((session) => (
+          <Dialog key={session.id} onOpenChange={(open) => open}>
             <DialogTrigger asChild>
-              <div className="bg-gray-800 text-white p-4 rounded-md shadow-md mb-4 w-full max-w-md cursor-pointer">
+              <div className="bg-gray-800 text-white p-4 rounded-md shadow-md mb-4 w-full max-w-md cursor-pointer" onClick={() => getSessionData(session)}>
                 <h1>Kategoria: {session.category}</h1>
                 <h1>Data: {session.created}</h1>
                 <h1>Wynik: {session.score}</h1>

@@ -20,16 +20,7 @@ export default function Page() {
   return (
     <div>
         <GenerateQuiz></GenerateQuiz>
-        <Link href="/historyStats">
-          <Button asChild>
-            <h1>Wyświetl Historię</h1>
-          </Button>
-        </Link>
-        <Link href="/stats">
-          <Button asChild>
-            <h1>Wyświetl statystyki</h1>
-          </Button>
-        </Link>
+        
     </div>
   );
 }
