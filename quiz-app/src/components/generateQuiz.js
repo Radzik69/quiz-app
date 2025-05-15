@@ -22,6 +22,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { isUserLoggedIn } from "@/app/globalVariables";
 import FloatingDockMenu from "./floatingDock";
+import { AnimatedCircularProgressBar } from "./magicui/animated-circular-progress-bar";
 
 export default function GenerateQuiz() {
   const [writtenTopic, setWrittenTopic] = useState("");
@@ -32,7 +33,8 @@ export default function GenerateQuiz() {
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sessionAnswers, setSessionAnswers] = useState(null);
-
+  const [proggresValue, setProggresValue] = useState(10);
+  const [notionTopics, setNotionTopics] = useState(null);
   const finalTopic = writtenTopic || selectedTopic;
 
   const currentLink = "http://172.16.15.163"
@@ -44,6 +46,21 @@ export default function GenerateQuiz() {
       const res = await fetch(`${currentLink}:5678/webhook/ai?topic=${finalTopic}`);
       const data = await res.json();
       setQuizData(data);
+    } catch (err) {
+      console.error("Error fetching question:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getNotionTopics = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${currentLink}:5678/webhook/getNotionTopics`);
+      const data = await res.json();
+      data.reverse();
+      setNotionTopics(data);
+      console.log("Fetched topics:", data);
     } catch (err) {
       console.error("Error fetching question:", err);
     } finally {
@@ -159,7 +176,6 @@ export default function GenerateQuiz() {
     const questionId = savedQuestion.id;
     const sessionId = sessionDbData.id;
     const isCorrect = answer == quizData[0].output.correctAnswer;
-
     if (isCorrect) {
       setScore((prev) => prev + 1);
       toast({
@@ -177,6 +193,7 @@ export default function GenerateQuiz() {
 
     await addAnswerToDB(answer, isCorrect, questionId, sessionId);
     setQuestionNumber((prev) => prev + 1);
+    setProggresValue((prev) => prev + 10);
     getQuizData();
   };
 
@@ -196,6 +213,7 @@ export default function GenerateQuiz() {
   const generateNewQuiz = () => {
     setQuizData(null);
     setQuestionNumber(0);
+    setProggresValue(0);
     setScore(0);
     setSessionDbData(null);
     setSessionAnswers(null);
@@ -221,6 +239,11 @@ export default function GenerateQuiz() {
     }
   }, [questionNumber]);
 
+   useEffect(() => {
+    getNotionTopics()
+  }, []);
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-pink-100 flex flex-col items-center py-10 gap-10">
       {loading && (
@@ -240,6 +263,7 @@ export default function GenerateQuiz() {
       )}
 
       {!loading && !quizData && (
+        <div>
         <Card className="w-[350px] shadow-xl">
           <CardHeader>
             <CardTitle className="text-xl text-indigo-600">Start a New Quiz</CardTitle>
@@ -268,10 +292,11 @@ export default function GenerateQuiz() {
                     <SelectValue placeholder="Choose topic..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="programming">Programming</SelectItem>
-                    <SelectItem value="poland">Poland</SelectItem>
-                    <SelectItem value="javascript">JavaScript</SelectItem>
-                    <SelectItem value="history">History</SelectItem>
+                    {notionTopics && notionTopics.map((topic, index) => (
+                      <SelectItem key={index} value={topic}>
+                        {topic.property_name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -282,9 +307,12 @@ export default function GenerateQuiz() {
             <Button onClick={generateQuiz}>Generate Quiz</Button>
           </CardFooter>
         </Card>
+              <FloatingDockMenu />
+        </div>
       )}
 
       {!loading && quizData && questionNumber < 10 && (
+        <div>
         <Card className="w-full max-w-xl shadow-2xl">
           <CardHeader>
             <CardTitle className="text-xl font-bold">
@@ -297,7 +325,7 @@ export default function GenerateQuiz() {
                 <Button
                   key={i}
                   onClick={checkAnswerCorrect}
-                  className="text-md py-5 transition-colors hover:bg-indigo-600 hover:text-white"
+                  className="text-md py-5 transition-colors hover:bg-indigo-600 hover:text-white "
                 >
                   {ans.text}
                 </Button>
@@ -305,6 +333,15 @@ export default function GenerateQuiz() {
             </div>
           </CardContent>
         </Card>
+        <AnimatedCircularProgressBar
+          className="w-96 h-96 mt-10 flex justify-center items-center"
+          max={100}
+          min={0}
+          value={proggresValue}
+          gaugePrimaryColor="rgb(79 70 229)"
+          gaugeSecondaryColor="rgba(0, 0, 0, 0.1)"
+        />
+        </div>
       )}
 
       {!loading && questionNumber === 10 && (
@@ -339,10 +376,9 @@ export default function GenerateQuiz() {
               </div>
             );
           })}
+                <FloatingDockMenu />
         </div>
       )}
-
-      <FloatingDockMenu />
     </div>
   );
 }

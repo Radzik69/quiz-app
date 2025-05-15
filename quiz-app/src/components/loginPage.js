@@ -25,9 +25,9 @@ export default function LoginPage() {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  
-  const linkSchool = "http://172.16.15.163"
-  const linkHome = "http://192.168.88.216"
+  const [isError, setIsError] = useState(false);
+  const currentLink = "http://172.16.15.163"
+  // const currentLink = "http://192.168.88.216"
 
   const getInputData = (data) => {
     if(data.target.id === "email") setUserEmail(data.target.value);
@@ -44,7 +44,7 @@ export default function LoginPage() {
     };
 
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/register`, {
+      const res = await fetch(`${currentLink}:5678/webhook/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,6 +57,7 @@ export default function LoginPage() {
       setUserLogged(data)
     } catch (err) {
       console.error("Error sending data to n8n:", err);
+      setIsError(true);
     }
   };
 
@@ -68,7 +69,7 @@ export default function LoginPage() {
     };
 
     try {
-      const res = await fetch(`${linkHome}:5678/webhook/login`, {
+      const res = await fetch(`${currentLink}:5678/webhook/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,6 +82,7 @@ export default function LoginPage() {
       setUserLogged(data)
     } catch (err) {
       console.error("Error sending data to n8n:", err);
+      setIsError(true);
     }
   };
   
@@ -88,7 +90,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-800 to-gray-700 p-4">
-      <Tabs defaultValue="Register" className="w-full max-w-md shadow-xl rounded-2xl bg-gray-800/80 backdrop-blur-md p-6">
+      <Tabs defaultValue="Register" className="w-full max-w-md shadow-xl rounded-2xl bg-gray-800/80 backdrop-blur-md p-6" onValueChange={() => setIsError(false)}
+>
         <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-700/50 backdrop-blur-md rounded-xl shadow-inner">
           <TabsTrigger
             value="Register"
@@ -130,6 +133,11 @@ export default function LoginPage() {
               <Button onClick={handleRegister} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
                 Register
               </Button>
+              {isError && (
+                <div className="text-red-500 text-sm mt-2">
+                  Invalid email or password.
+                </div>
+              )}
             </CardFooter>
           </Card>
         </TabsContent>
@@ -156,6 +164,11 @@ export default function LoginPage() {
               <Button onClick={handleLogin} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
                 Login
               </Button>
+              {isError && (
+                <div className="text-red-500 text-sm mt-2">
+                  Invalid email or password.
+                </div>
+              )}
             </CardFooter>
           </Card>
         </TabsContent>

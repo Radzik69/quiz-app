@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { isUserLoggedIn } from "../globalVariables";
 import { useEffect, useState } from "react";
+import FloatingDockMenu from "@/components/floatingDock";
 
 export default function Stats() {
   const userLogged = isUserLoggedIn((state) => state.user);
@@ -85,6 +86,7 @@ export default function Stats() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-6 flex flex-col items-center gap-10">
+      <FloatingDockMenu></FloatingDockMenu>
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-6 transition-transform hover:scale-[1.01]">
         <h2 className="text-2xl font-bold text-center mb-4 text-purple-700">Statystyki odpowiedzi</h2>
         <ResponsiveContainer width="100%" height={300}>

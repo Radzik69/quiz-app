@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function Page() {
   const userLogged = isUserLoggedIn((state) => state.user);
-
+  
   if(!userLogged){
     return(
       <LoginPage></LoginPage>

@@ -16,6 +16,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import FloatingDockMenu from "@/components/floatingDock";
 
 export default function History() {
   const userLogged = isUserLoggedIn((state) => state.user);
@@ -64,9 +65,14 @@ export default function History() {
   }, []);
 
   const getSessionData = async (session) => {
-    await getSessionAnswers(session.id);
-    await getSessionQuestions(sessionAnswers);
-  };
+  setSessionQuestions([])
+  const res = await fetch(`${currentLink}:5678/webhook/sessionAnswers?filter=${session.id}`);
+  const answerData = await res.json();
+  setSessionAnswers(answerData.items);
+  await getSessionQuestions(answerData.items);
+
+};
+
 
   const getAnswerClass = (answerText, selectedAnswer, isCorrect) => {
     if (answerText === selectedAnswer && isCorrect) return "bg-green-500 text-white font-bold";
@@ -77,6 +83,7 @@ export default function History() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <FloatingDockMenu className="w-full h-16"></FloatingDockMenu>
       {allSessions &&
         allSessions.items?.map((session) => (
           <Dialog key={session.id} onOpenChange={(open) => open}>
@@ -89,7 +96,7 @@ export default function History() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Historia sesji</DialogTitle>
+                <DialogTitle></DialogTitle>
               </DialogHeader>
               <Carousel className="w-full max-w-md">
                 <CarouselContent>
