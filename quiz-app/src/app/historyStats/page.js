@@ -24,13 +24,14 @@ export default function History() {
   const [sessionAnswers, setSessionAnswers] = useState([]);
   const [sessionQuestions, setSessionQuestions] = useState([]);
 
-  const currentLink = "http://172.16.15.163"
+  const currentLink = "http://192.168.88.216"
 
   const getAllSessions = async () => {
     try {
       const res = await fetch(`${currentLink}:5678/webhook/allSessionsUser?filter=${userLogged[0].record.id}`);
       const data = await res.json();
       setAllSessions(data);
+      console.log("Fetched sessions:", data);
     } catch (err) {
       console.error("Error fetching session answers:", err);
     }

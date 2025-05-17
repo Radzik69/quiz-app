@@ -15,7 +15,7 @@ import FloatingDockMenu from "@/components/floatingDock";
 
 export default function Stats() {
   const userLogged = isUserLoggedIn((state) => state.user);
-  const currentLink = "http://172.16.15.163";
+  const currentLink = "http://192.168.88.216"
 
   const [answersCorrectData, setAnswersCorrectData] = useState([]);
   const [sessionsScoreData, setSessionsScoreData] = useState([]);

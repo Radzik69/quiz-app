@@ -1,0 +1,3 @@
+model: gemma2:2b
+pobranie: ollama run gemma2:2b
+wlaczenie ollamy: sudo OLLAMA_HOST=0.0.0.0:1100 OLLAMA_MODELS=~/.ollama/models ollama serve

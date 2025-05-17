@@ -26,8 +26,8 @@ export default function LoginPage() {
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [isError, setIsError] = useState(false);
-  const currentLink = "http://172.16.15.163"
-  // const currentLink = "http://192.168.88.216"
+  // const currentLink = "http://172.16.15.163"
+  const currentLink = "http://192.168.88.216"
 
   const getInputData = (data) => {
     if(data.target.id === "email") setUserEmail(data.target.value);

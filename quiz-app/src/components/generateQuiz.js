@@ -37,21 +37,56 @@ export default function GenerateQuiz() {
   const [notionTopics, setNotionTopics] = useState(null);
   const finalTopic = writtenTopic || selectedTopic;
 
-  const currentLink = "http://172.16.15.163"
+  const currentLink = "http://192.168.88.216"
   const userLogged = isUserLoggedIn((state) => state.user);
 
-  const getQuizData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${currentLink}:5678/webhook/ai?topic=${finalTopic}`);
-      const data = await res.json();
-      setQuizData(data);
-    } catch (err) {
-      console.error("Error fetching question:", err);
-    } finally {
-      setLoading(false);
+const [lastValidQuizData, setLastValidQuizData] = useState(null);
+
+const getQuizData = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${currentLink}:5678/webhook/ai?topic=${finalTopic}`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const data = await res.json();
+    console.log("Fetched question:", data);
+    if (
+      !Array.isArray(data) ||
+      data.length === 0 ||
+      !data[0] ||
+      !data[0].output ||
+      typeof data[0].output.question !== "string" ||
+      !Array.isArray(data[0].output.answers) ||
+      data[0].output.answers.length < 3 ||
+      typeof data[0].output.correctAnswer !== "string"
+    ) {
+      console.error("Invalid question format:", data);
+      setQuizData("error");
+      return;
     }
-  };
+
+    setQuizData(data);
+    setLastValidQuizData(data);
+  } catch (err) {
+    console.error("Error fetching or validating question:", err);
+    toast({
+      variant: "destructive",
+      title: "Error loading quiz",
+      description: "AI did not return a valid question. Please try again.",
+    });
+    setQuizData("error");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const retryLastQuiz = () => {
+  if (lastValidQuizData) {
+    setQuizData(lastValidQuizData);
+  }
+};
+
+
 
   const getNotionTopics = async () => {
     setLoading(true);
@@ -311,7 +346,7 @@ export default function GenerateQuiz() {
         </div>
       )}
 
-      {!loading && quizData && questionNumber < 10 && (
+      {!loading && quizData && questionNumber < 10 && quizData!="error" && (
         <div>
         <Card className="w-full max-w-xl shadow-2xl">
           <CardHeader>
@@ -379,6 +414,20 @@ export default function GenerateQuiz() {
                 <FloatingDockMenu />
         </div>
       )}
+
+      {!loading && quizData === "error" && (
+  <Card className="w-[350px] text-center shadow-md">
+    <CardHeader>
+      <CardTitle>Oops!</CardTitle>
+      <CardDescription>Something went wrong. Please try again.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <Button onClick={retryLastQuiz}>Try Again</Button>
+    </CardContent>
+  </Card>
+)}
+
+
     </div>
   );
 }
